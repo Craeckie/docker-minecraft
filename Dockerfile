@@ -11,7 +11,7 @@
 
 
 # Base system is the LTS version of Ubuntu.
-FROM   ubuntu:14.04
+FROM   java:8
 
 
 # Make sure we don't get notifications we can't answer during building.
@@ -19,11 +19,8 @@ ENV    DEBIAN_FRONTEND noninteractive
 
 
 # Download and install everything from the repos.
-RUN    apt-get --yes update; apt-get --yes upgrade; apt-get --yes install software-properties-common
-RUN    sudo apt-add-repository --yes ppa:webupd8team/java; apt-get --yes update
-RUN    echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections  && \
-       echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections  && \
-       apt-get --yes install curl oracle-java8-installer ; apt-get clean
+RUN    echo "Acquire::http::Proxy \"http://sanemind.de:3142\";" | tee /etc/apt/apt.conf.d/01proxy \
+       && apt-get --yes update && apt-get --yes upgrade && apt-get --yes install curl && apt-get clean
 
 
 # Load in all of our config files.
